@@ -9,30 +9,49 @@
 dht DHT;
 const int dht = A2; // define a parta do sensor de umidade e temperatura como A2 
 const int Rele = 12;// define a porta do rele  como 12
-Ultrasonic ultrasonic(3, 2); // define as portas do sensor de ultrassom como 3 e 2
+
 /****************************************************************
 ***************CONFIGURAÇâO DO SENSOR ULTRASSOM*******************
 *****************************************************************/
-long microsec = 0; // variaveis de controle
-float distanciaCM = 0;
+#define trig 4 
+#define echo 5 
+unsigned long tempo;
+double distancia;
 
 void setup()
 {
 pinMode(Rele, OUTPUT); //define rele como output 
 digitalWrite(Rele, LOW); //define o rele como low 
+
+//ultrassom
+pinMode(trig, OUTPUT);
+    pinMode(echo, INPUT);
+
+    Serial.begin(9600);
+
+    digitalWrite(trig, LOW);
 }
 void loop()
 {
   DHT.read11(dht); //lendo valor do sensor de temperatura
-  microsec = ultrasonic.timing();//Lendo o valor do senso ultrassom
-  distanciaCM = ultrasonic.convert(microsec, Ultrasonic::CM);//Convertendo a distância em CM
+  
+  digitalWrite(trig, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trig, LOW);
 
-if (distanciaCM <=20 && DHT.temperature, 0 <=25)// define qual a distancia e temperatura aciona o ventilador !!AJUSTAR DEPOIS!!
+    tempo = pulseIn(echo, HIGH);
+    distancia = tempo/58;
+
+    Serial.println(distancia);
+
+    delay(500);
+
+if (distancia <=20 && DHT.temperature, 0 <=25)// define qual a distancia e temperatura aciona o ventilador !!AJUSTAR DEPOIS!!
 { 
  digitalWrite(Rele, HIGH); // define o rele como high
 }
 else{
-  digitalWrite(Rele, HIGH); // define o rele como low
+  digitalWrite(Rele, LOW); // define o rele como low
   } 
 }
 /**************************************************************************
@@ -51,3 +70,5 @@ else{
 ──────────────▀████▀▀▀████▀──────────────
 ────────────────▀███▄███▀────────────────
 ───────────────────▀█▀───────────────────*/
+
+//obs: se deram certo as modificações, agradeçam a Fernando o grande senhor lorde do universo. Se deu tudo errado foi Maselo
